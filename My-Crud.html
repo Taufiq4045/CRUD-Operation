@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang = "en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE-edge">
+        <meta name="viewport" content="width = device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
+    crossorigin="anonymous">
+        <title>CRUD</title>
+        <style>
+           :root {
+               @import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=Poppins:wght@300&display=swap');
+               font-family: "Poppins", sans-serif;
+               font-family: "Open Sans", sans-serif;
+            }
+
+            body{
+                background-image: url("https://www.desktopbackground.org/download/1400x1050/2010/12/30/134429_full-hd-1080p-nature-s-desktop-backgrounds-hd-4k-or-hd-wallpapers_1920x1080_h.jpg");
+                background-size: cover;
+                margin-left: 80px;
+            }
+
+
+            .container{
+               height:auto;
+               width:550px;
+               background-color:lightblue;
+               border-radius:10px;
+               padding-bottom:6px;
+               box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+               display:inline-block;
+               margin:10px;
+               transition: transform 0.3s;
+            }
+
+            .profile {
+                border-radius:80%;
+                width: 80px;
+                height:80px;
+                transition: transform 0.3s;
+            }
+
+            .details{
+                padding: 0 0 5px 10px;
+            }
+
+            .container:hover {
+                cursor: pointer;
+                transform: scale(1.05);
+                background-color: crimson;
+                color:white;
+                box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.5);
+            }
+
+            .profile:hover {
+                 cursor: pointer;
+                 transform : rotate(360deg);
+            }
+           
+            .user-container{
+                display:flex;
+                align-items:center;
+                padding-left:10px;
+                gap:5px;
+            }
+
+            #myModal{
+               display:none;
+               position:fixed;
+               top:0;
+              left:0;
+              z-index:1;
+              width:100%;
+              height:100%;
+              background-color:rgba(0,0,0,0.5)
+            }
+
+            #modal-content{
+                background-color:lightsalmon;
+                margin: auto;
+                padding: 20px;
+                border: 1px solid #888;
+                width: 50%;
+                margin-top:7rem;
+             }
+
+            .close1{
+               float:right;
+               font-size:2rem;
+               cursor:pointer;
+            }
+
+           .add-user{
+               position:relative;
+               top:2rem;
+               left:2rem;
+            }
+
+           .button{
+              background-color:rgba(98, 123, 192, 0.644);
+              color:hsl(217, 19%, 35%);
+              font-size:1rem;
+              margin-top: 10px;
+              width:5rem;
+              border-radius:20%;
+              border:2px solid hsl(217, 19%, 35%);
+              cursor:pointer;
+            }
+
+            .button:hover{
+              background-color:lightcoral;
+            }
+
+            .shareContainer{
+              background-color: rgb(224, 67, 67);
+              display: flex;
+              align-items: center;
+              gap:3rem;
+              margin-top:2rem;
+              border-radius:30px;
+              width:40rem;
+            }
+
+            .modal-content {
+              background-color: rgb(228, 170, 228);
+            }
+
+            .shareButtons{
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                margin-left: auto;
+                margin-right: 1rem;;
+            }
+
+            .text-center{
+                margin-top: 10px;
+                font-family: "Jazz LET, fantasy";
+                color: rgb(61, 21, 16);
+                font-size: 50px;
+                text-decoration: underline;
+                font-weight: bolder;
+            }
+
+        </style>
+    </head>
+    <body>
+
+        <h1 class="text-center">Welcome to Our Client Page</h1>
+    <div class="d-flex justify-content-center"><button class="button" id="add-user">Add Client</button></div>
+    <div class="modal1" id="myModal">
+        <div id="modal-content">
+          <span class="close1">&times;</span>
+    <div>    <h4>Enter details to add</h4>
+            <label for="fname">Name</label>
+            <input type="textbox" id="username" ><br><br>
+            <label for="avatar">Avatar</label>
+            <input type="textbox" id="avatar" ><br><br>
+            <button class="  button" type="submit"  onclick="addUser()">send</button>
+             </div>   
+        </div>
+      </div>
+
+
+      <div id=container>
+        <div id=shareCointainer></div>
+      </div>
+      <div class="modal" id="editModal">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <div class="modal-title">Edit Details</div>
+              <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+              <label for="username1">Name :</label>
+              <input type="textbox" id="username1" ><br><br>
+              <label for="avatar1">Avatar :</label>
+              <input type="textbox" id="avatar1" ><br><br>
+              <button class="button" type="submit" onclick="editUser()"  data-dismiss="modal">send</button>
+            </div>
+          </div>
+        </div>
+      </div> 
+      <div>
+
+        
+           
+           <section class="user-list">
+           </section>
+
+
+        <script>
+
+             var modalBtn = document.getElementById("add-user");
+             var modal1=document.getElementById("myModal")
+             var close=document.getElementsByClassName("close1")
+              modalBtn.onclick=function(){
+                  console.log("in modal")
+                 modal1.style.display="block";
+             }
+              close[0].onclick=function(){
+              modal1.style.display="none";
+              }
+
+          
+            async  function details (){ 
+               try{ const data  = await fetch('https://611f26749771bf001785c74e.mockapi.io/users', {method: "GET"});
+               const user = await data.json();
+               document.querySelector(".user-list").innerHTML = ``;
+               
+            
+               user.forEach((users) => createProfile(users));
+               }catch(errMsg){
+               console.log(errMsg);
+               }
+            }
+
+            details();
+
+ 
+            function createProfile({createdAt, name, avatar, id}){
+  
+               const info = document.createElement("div");
+               info.setAttribute("class", "container");
+  
+               info.innerHTML =` 
+                       <div class="user-container">
+                       <img class="profile" src=${avatar} width="250px" height="150px" />
+      
+     
+                       <div class="details">
+                       <h3>${name}</h3>
+                       <p><b>Created at: </b>${new Date(createdAt).toDateString()}</p>
+                       </div>
+                       <div class="shareButtons">
+                       <div><button  class=" btn button" data-toggle="modal" data-target="#editModal" onclick="editModal(${id})">Edit</button></div>
+                       <button class=" btn button" onclick="deleteUser(${id})">Remove</button>
+                       </div>
+                       </div>`;
+                document.querySelector(".user-list").append(info);
+            }
+
+
+            // Delete User
+
+           async function deleteUser(id){
+                const data = await fetch(`https://611f26749771bf001785c74e.mockapi.io/users/${id}`,
+                 {method: "DELETE"});
+  
+                 const user = await data.json();
+                 console.log(user);
+                 details();
+            }
+
+            // adding User
+
+             async function addUser(){
+
+             modal1.style.display="none";
+             let name = document.querySelector("#username").value;
+             let avatar = document.querySelector("#avatar").value;
+             console.log(name, avatar);
+
+
+             fetch('https://611f26749771bf001785c74e.mockapi.io/users', {method: "POST",
+      
+                 headers: {
+                    "Content-Type": "application/json"
+                 },                                                       
+     
+                 body: JSON.stringify({
+                     name: name,
+                     avatar: avatar,
+                     createdAt: new Date().toISOString()
+                 })
+                 }).then((data) => data.json())
+                .then((user) => console.log(user));
+                details();
+                document.querySelector("#username").value= ``;
+                document.querySelector("#avatar").value= ``;
+             }
+
+             let Uid
+               async function editModal(id){
+
+                   let data= await fetch(`https://611f26749771bf001785c74e.mockapi.io/users/${id}`);
+                   user=await data.json()
+                   username=document.querySelector("#username1");
+                   avatar=document.querySelector("#avatar1");
+                   Uid=user.id;
+                   username.value=user.name;
+                   avatar.value=user.avatar;
+                   console.log(user)
+                }
+
+                async function editUser(){
+
+                  username=document.querySelector("#username1").value;
+                  avatar=document.querySelector("#avatar1").value;
+                  console.log(username,avatar)
+
+                  put=await fetch(`https://611f26749771bf001785c74e.mockapi.io/users/${Uid}`,
+                  {
+                        method:"PUT",
+                        headers:{
+                       'Content-Type': 'application/json'},
+                        body:JSON.stringify({
+                        name: username,
+                        avatar: avatar
+                        })
+                       })
+                    console.log(put)
+                    details();
+                }
+         
+     </script>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
+crossorigin="anonymous"></script>
+        
+    </body>
+</html> 
